@@ -1,0 +1,11 @@
+{
+  "name": "w2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "pettier": "^1.1.0",
+    "prettier": "^3.3.3"
+  }
+
+}

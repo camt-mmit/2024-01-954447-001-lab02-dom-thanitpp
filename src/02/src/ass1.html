@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Sections</title>
+    <script type="module" src="js/dom.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .section {
+            border: 1px solid black;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            margin: 0;
+        }
+
+        .app-cmd-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .app-cmd-remove-input {
+            margin-left: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .app-cmd-add-input,
+        .app-cmd-remove-section {
+            margin-bottom: 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .app-cmd-remove-section {
+            background-color: red;
+        }
+
+        .app-cmd-remove-input:hover,
+        .app-cmd-add-input:hover,
+        .app-cmd-remove-section:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Button to add a new section -->
+    <button class="add-section">+ Section</button>
+
+    <!-- Template for dynamic sections -->
+    <template id="section-template">
+        <div class="section">
+            <div class="section-header">
+                <h2>Section <span class="section-number"></span></h2>
+                <button type="button" class="app-cmd-remove-section">Remove Section</button>
+            </div>
+            <button type="button" class="app-cmd-add-input">+ Input</button>
+            <div class="app-cmd-input-list"></div>
+            <label>
+                <b>Result:</b> <output class="app-elem-result">0</output>
+            </label>
+        </div>
+    </template>
+
+    <!-- Template for dynamic inputs -->
+    <template id="input-template">
+        <div class="app-cmd-input">
+            <label>
+                <b class="app-elem-title">Number <span class="app-elem-input-title-no"></span></b>
+                <input type="number" value="0" class="app-elem-input" aria-label="Enter a number">
+            </label>
+            <button type="button" class="app-cmd-remove-input">X</button>
+        </div>
+    </template>
+</body>
+
+</html>
