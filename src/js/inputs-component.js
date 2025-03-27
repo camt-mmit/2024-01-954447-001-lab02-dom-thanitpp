@@ -1,71 +1,65 @@
-import { assignComponent as assignInputComponent } from "./input-components";
-// Original: return template.content.cloneNode(true).firstElementChild;
-function createComponent(template) {
+export function createComponent(template) {
+  if (!template || !template.content) {
+    console.error("Invalid template provided to createComponent.");
+    return null;
+  }
   return template.content.cloneNode(true).firstElementChild;
 }
-export function assignSectionComponent(globalContainer) {
-  const sectionTemplate = document.querySelector("template.app-tmpl-section");
-  if (!sectionTemplate) {
-    console.error("Section template not found");
-    return;
-  }
-  const updateSectionNumbersAndButtons = () => {
-    const sections = [...globalContainer.querySelectorAll(".app-cmp-section")];
-    sections.forEach((section, index) => {
-      const sectionNumberElement = section.querySelector(".section-number");
-      if (sectionNumberElement) {
-        sectionNumberElement.textContent = `Section ${index + 1}`;
-      }
-      const removeButton = section.querySelector(".app-cmd-remove-section");
-      if (removeButton) {
-        removeButton.disabled = sections.length === 1;
-      }
-    });
-  };
-  const addSection = () => {
-    const sectionComponent = createComponent(sectionTemplate);
-    sectionComponent.addEventListener("click", (event) => {
-      const removeButton = event.target.closest(".app-cmd-remove-section");
-      if (removeButton) {
-        const sections = globalContainer.querySelectorAll(".app-cmp-section");
-        if (sections.length > 1) {
-          const sectionToRemove = removeButton.closest(".app-cmp-section");
-          if (sectionToRemove) {
-            sectionToRemove.remove();
-            updateSectionNumbersAndButtons();
-          }
-        }
-      }
-    });
-    assignInputComponent(sectionComponent);
-    globalContainer.appendChild(sectionComponent);
-    updateSectionNumbersAndButtons();
-  };
-  const addSectionButton = document.querySelector(".app-cmd-add-section");
-  if (addSectionButton) {
-    addSectionButton.addEventListener("click", addSection);
-  }
-  globalContainer.addEventListener("click", (event) => {
-    const removeButton = event.target.closest(".app-cmd-remove-section");
-    if (removeButton) {
-      const sections = globalContainer.querySelectorAll(".app-cmp-section");
-      if (sections.length > 1) {
-        const sectionToRemove = removeButton.closest(".app-cmp-section");
-        if (sectionToRemove) {
-          sectionToRemove.remove();
-          updateSectionNumbersAndButtons();
-        }
-      }
+
+export function updateInputNumbers(container) {
+  const inputs = container.querySelectorAll(".app-cmd-input");
+  inputs.forEach((input, index) => {
+    const title = input.querySelector(".app-elem-input-title-no");
+    if (title) {
+      title.textContent = index + 1;
     }
   });
-  const existingSections = globalContainer.querySelectorAll(".app-cmp-section");
-  if (existingSections.length === 0) {
-    addSection();
-  }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const globalContainer = document.querySelector(".app-sections-list");
-  if (globalContainer) {
-    assignSectionComponent(globalContainer);
+
+export function assignInputs(addButton, template, container, computeResult) {
+  if (
+    !addButton ||
+    !template ||
+    !container ||
+    typeof computeResult !== "function"
+  ) {
+    console.error("Invalid arguments passed to assignInputs.");
+    return;
   }
-});
+
+  addButton.addEventListener("click", () => {
+    const inputComponent = createComponent(template);
+    if (!inputComponent) {
+      console.error("Failed to create input component.");
+      return;
+    }
+
+    const inputCount = container.querySelectorAll(".app-cmd-input").length + 1;
+    const title = inputComponent.querySelector(".app-elem-input-title-no");
+    if (title) {
+      title.textContent = inputCount;
+    }
+
+    const inputField = inputComponent.querySelector(".app-elem-input");
+    if (inputField) {
+      inputField.addEventListener("input", () => computeResult());
+    }
+
+    const removeButton = inputComponent.querySelector(".app-cmd-remove-input");
+    if (removeButton) {
+      removeButton.addEventListener("click", () => {
+        const allInputs = container.querySelectorAll(".app-cmd-input");
+        if (allInputs.length > 1) {
+          inputComponent.remove();
+          updateInputNumbers(container);
+          computeResult();
+        } else {
+          alert("At least one input must exist in a section.");
+        }
+      });
+    }
+
+    container.appendChild(inputComponent);
+    computeResult();
+  });
+}
